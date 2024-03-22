@@ -1,0 +1,29 @@
+.custom-table {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  width: 100%;
+  border-color: rgb(141, 124, 124);
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+  padding: 10px;
+  text-align: left;
+}
+
+.custom-table td {
+  padding: 5px; /* Adjust cell padding */
+}
+
+.container {
+  width: 100%;
+  padding: 30px;
+}
+
+.spinner {
+  text-align: center;
+}
+
+.text {
+  color: #f2f2f2;
+}
