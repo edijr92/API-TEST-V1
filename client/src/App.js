@@ -1,23 +1,27 @@
-import { React, useEffect, useState } from 'react';
-import { Table, Navbar, Spinner } from 'react-bootstrap';
+import { React, useEffect } from 'react';
+import { Table, Navbar } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { store } from './redux/store'
+import { allFiles, fetchGetsFiles, chooseFile, fetchFile } from './redux/slices';
+import { Form } from 'react-bootstrap';
 import './App.css';
 
 function App() {
-  const [data, setData] = useState(null);
+  // const dispatch = useDispatch();
+  const state = useSelector(allFiles);
+  const { data, files, fileSelected } = state;
+
+  const handleOnchange = (event) => {
+    event.preventDefault();
+    store.dispatch(chooseFile(event.target.value))
+    if (event.target.value) {
+      store.dispatch(fetchFile(event.target.value))
+    }
+  };
 
   useEffect(() => {
-    fetch('http://localhost:8080/files/data').then((res)=>{
-      return res.json();
-    }).then(table => {
-      const rows = [];
-      table.forEach((files) => {
-        return files.lines.forEach(element => {
-          return rows.push({ ...element, fileName: files.file })
-        });
-      })
-      setData(rows);
-    })
-  }, [setData]);
+    store.dispatch(fetchGetsFiles())
+  }, [data, fileSelected]);
 
   return (
     <div>
@@ -25,7 +29,21 @@ function App() {
       <Navbar.Brand className='text'>React Test App</Navbar.Brand>
     </Navbar>
       <div className="container">
-        {data ? (
+        <div className='select'>
+          <Form>
+            <Form.Group>
+              <Form.Label>Seleccionar archivo</Form.Label>
+              <Form.Select onChange={handleOnchange}>
+                {files && files.map((option, index) => (
+                  <option key={index} value={option.value}>
+                    {option}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Form>
+        </div>
+      {data.length !== 0 ? (
         <Table striped bordered hover responsive className="custom-table">
           <thead>
             <tr>
@@ -45,7 +63,7 @@ function App() {
               </tr>
             ))}
           </tbody>
-        </Table>): (<div className="spinner" ><Spinner animation="border" role="status"/></div>)}
+        </Table>): (<div className="spinner" ><h2>No hay data disponible...</h2></div>)}
       </div>
     </div>
   );
